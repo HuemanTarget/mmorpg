@@ -5,6 +5,7 @@ let config = {
   scene: {
     preload: preload,
     create: create,
+    update: update,
   },
   physics: {
     default: "arcade",
@@ -25,6 +26,10 @@ function preload() {
     frameWidth: 32,
     frameHeight: 32,
   });
+  this.load.spritesheet("characters", "assets/images/characters.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
 }
 
 function create() {
@@ -36,4 +41,25 @@ function create() {
   this.add.image(300, 300, "items", 0);
 
   this.physics.add.image(500, 100, "button1");
+
+  this.player = this.physics.add.image(32, 32, "characters", 0);
+  this.player.setScale(2);
+
+  this.cursors = this.input.keyboard.createCursorKeys();
+}
+
+function update() {
+  this.player.setVelocity(0);
+
+  if (this.cursors.left.isDown) {
+    this.player.setVelocityX(-160);
+  } else if (this.cursors.right.isDown) {
+    this.player.setVelocityX(160);
+  }
+
+  if (this.cursors.up.isDown) {
+    this.player.setVelocityY(-160);
+  } else if (this.cursors.down.isDown) {
+    this.player.setVelocityY(160);
+  }
 }
