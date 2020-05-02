@@ -6,6 +6,15 @@ let config = {
     preload: preload,
     create: create,
   },
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: true,
+      gravity: {
+        y: 0,
+      },
+    },
+  },
 };
 
 let game = new Phaser.Game(config);
@@ -23,5 +32,8 @@ function create() {
   button.setOrigin(0.5, 0.5);
 
   this.add.sprite(300, 100, "button1");
+
   this.add.image(300, 300, "items", 0);
+
+  this.physics.add.image(500, 100, "button1");
 }
