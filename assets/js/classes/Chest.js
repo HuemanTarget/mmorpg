@@ -14,4 +14,16 @@ class Chest extends Phaser.Physics.Arcade.Image {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
   }
+
+  makeActive() {
+    this.setActive(true);
+    this.setVisible(true);
+    this.body.checkCollision.none = false;
+  }
+
+  makeInactive() {
+    this.setActive(false);
+    this.setVisible(false);
+    this.body.checkCollision.none = true;
+  }
 }
