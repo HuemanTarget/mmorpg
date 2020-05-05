@@ -12,14 +12,15 @@ class GameScene extends Phaser.Scene {
     this.createMap();
     this.createAudio();
     this.createChests();
-    // this.createWalls();
-    this.createPlayer();
-    this.addCollisions();
     this.createInput();
+
+    this.createGameManager();
   }
 
   update() {
-    this.player.update(this.cursors);
+    if (this.player) {
+      this.player.update(this.cursors);
+    }
   }
 
   createAudio() {
@@ -29,8 +30,14 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  createPlayer() {
-    this.player = new Player(this, 224, 224, "characters", 0);
+  createPlayer(location) {
+    this.player = new Player(
+      this,
+      location[0] * 2,
+      location[1] * 2,
+      "characters",
+      0
+    );
   }
 
   createChests() {
@@ -62,17 +69,12 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // createWalls() {
-  //   this.wall = this.physics.add.image(500, 100, "button1");
-  //   this.wall.setImmovable();
-  // }
-
   createInput() {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   addCollisions() {
-    this.physics.add.collider(this.player, this.blockedLayer);
+    this.physics.add.collider(this.player, this.map.blockedLayer);
     this.physics.add.overlap(
       this.player,
       this.chests,
@@ -91,34 +93,15 @@ class GameScene extends Phaser.Scene {
   }
 
   createMap() {
-    this.map = this.make.tilemap({ key: "map" });
-    this.tiles = this.map.addTilesetImage(
-      "background",
-      "background",
-      32,
-      32,
-      1,
-      2
-    );
-    this.backgroundLayer = this.map.createStaticLayer(
-      "background",
-      this.tiles,
-      0,
-      0
-    );
-    this.backgroundLayer.setScale(2);
-    this.blockedLayer = this.map.createStaticLayer("blocked", this.tiles, 0, 0);
-    this.blockedLayer.setScale(2);
-    this.blockedLayer.setCollisionByExclusion([-1]);
+    this.map = new Map(this, "map", "background", "background", "blocked");
+  }
 
-    this.physics.world.bounds.width = this.map.widthInPixles * 2;
-    this.physics.world.bounds.height = this.map.heightInPixles * 2;
-
-    this.cameras.main.setBounds(
-      0,
-      0,
-      this.map.widthInPixles * 2,
-      this.map.heightInPixles * 2
-    );
+  createGameManager() {
+    this.events.on("spawnPlayer", (location) => {
+      this.createPlayer(location);
+      this.addCollisions();
+    });
+    this.gameManager = new GameManager(this, this.map.map.objects);
+    this.gameManager.setup();
   }
 }
